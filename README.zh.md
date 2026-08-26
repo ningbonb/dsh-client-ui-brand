@@ -2,15 +2,15 @@
 
 # dsh-client-ui-brand
 
-在不修改 DeepSeek Harness 源码的前提下，为 Web 端侧边栏和空会话图标配置产品品牌。
+这是一个非常简单的 DeepSeek Harness 的插件。在不修改 DeepSeek Harness 源码的前提下，可以自定义产品名称和 logo。
 
 ## 功能
 
-- 展开侧边栏中的产品名称；
-- 侧边栏和空会话中的产品图标；
-- 未配置自定义图标时使用内置原创 Agent 图标。
+- 自定义展开侧边栏中的产品名称；
+- 自定义侧边栏和空会话中的产品图标；
 
 浏览器标题、favicon 和 PWA 元数据不由此插件配置；它们需要构建定制的 Web Shell。
+空会话中的 slogan 目前官方不接受 PR ，所以不能做到无损调整，等官方开放 dsh core 的 slot 后，本插件可以实现。
 
 ## 安装
 
@@ -33,7 +33,7 @@ $DSH_HOME/profiles/web/cordis.patch.yml
 安装后的 bundle 默认使用 **Brand New Agent** 和内置 Agent 图标。所有配置项均可选；仅在需要覆盖默认值时，才添加后续 profile patch：
 
 ```yaml
-- id: ningbo-ui-brand
+- id: dsh-client-ui-brand
   config:
     productName: Acme Agent
     logoUrl: https://cdn.example.com/branding/acme-agent.svg
@@ -54,7 +54,7 @@ $DSH_HOME/profiles/web/cordis.patch.yml
 ### 本地图标
 
 ```yaml
-- id: ningbo-ui-brand
+- id: dsh-client-ui-brand
   config:
     productName: Acme Agent
     logoPath: /absolute/path/to/acme-agent-logo.svg

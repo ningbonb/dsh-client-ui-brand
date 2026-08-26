@@ -2,17 +2,20 @@ English | [中文](README.zh.md)
 
 # dsh-client-ui-brand
 
-Brand the DeepSeek Harness Web sidebar and empty-conversation mark without
-changing DSH source code.
+This is a simple DeepSeek Harness plugin. It customizes the product name and
+logo without changing DeepSeek Harness source code.
 
 ## What it changes
 
 - product name in the expanded sidebar;
-- product mark in the sidebar and empty conversation;
-- an original Agent mark when no custom logo is configured.
+- product mark in the sidebar and empty conversation.
 
 Browser title, favicon, and PWA metadata are not configurable through this
 plugin. They require a branded Web Shell build.
+
+DSH Core does not currently provide an accepted slot for the empty-conversation
+slogan. This plugin therefore cannot change it without an intrusive
+modification; it can support the slogan when DSH Core exposes that slot.
 
 ## Install
 
@@ -37,7 +40,7 @@ mark. Every configuration field is optional. Add this later profile patch only
 when overriding the defaults:
 
 ```yaml
-- id: ningbo-ui-brand
+- id: dsh-client-ui-brand
   config:
     productName: Acme Agent
     logoUrl: https://cdn.example.com/branding/acme-agent.svg
@@ -58,7 +61,7 @@ Configure either `logoUrl` or `logoPath`, not both.
 ### Local logo
 
 ```yaml
-- id: ningbo-ui-brand
+- id: dsh-client-ui-brand
   config:
     productName: Acme Agent
     logoPath: /absolute/path/to/acme-agent-logo.svg
