@@ -1,0 +1,10 @@
+# Activate this bundle after dsh-web-app. Product identity is configured by the
+# consuming profile in a later patch; this default is intentionally usable alone.
+- insert:
+    - id: ningbo-ui-brand
+      name: dsh-client-ui-brand
+      inject: [webServer]
+      config:
+        productName: Brand New Agent
+- id: ui-brand-official
+  disabled: true

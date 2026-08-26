@@ -1,0 +1,74 @@
+{
+  "name": "dsh-client-ui-brand",
+  "version": "0.1.0",
+  "description": "Non-invasive product name and logo branding for DeepSeek Harness Web",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ningbonb/dsh-client-ui-brand.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "types": "./lib/client/index.d.ts",
+      "default": "./lib/client/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "README.md",
+    "README.zh.md",
+    "LICENSE",
+    "cordis.patch.yml"
+  ],
+  "dsh": {
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-sidebar"
+      ]
+    },
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "watch": "tsup --watch",
+    "test": "vitest run",
+    "pack:check": "npm pack --dry-run"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^1.0.0",
+    "@deepseek-ai/dsh-client-runtime": "^0.1.0",
+    "@deepseek-ai/dsh-client-ui-conversation": "^0.1.0",
+    "@deepseek-ai/dsh-client-ui-sidebar": "^0.1.0",
+    "@deepseek-ai/dsh-host-webserver": "^0.1.0",
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-client-runtime": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-ui-conversation": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-client-ui-sidebar": "^0.1.1-rc.2",
+    "@deepseek-ai/dsh-host-webserver": "^0.1.1-rc.2",
+    "@types/node": "^22.0.0",
+    "@types/react": "~18.3.1",
+    "react": "^18.2.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}
