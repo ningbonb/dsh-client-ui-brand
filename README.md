@@ -5,6 +5,10 @@ English | [中文](README.zh.md)
 This is a simple DeepSeek Harness plugin. It customizes the product name and
 logo without changing DeepSeek Harness source code.
 
+## Preview
+
+![Branding plugin preview](assets/web-preview.png)
+
 ## What it changes
 
 - product name in the expanded sidebar;

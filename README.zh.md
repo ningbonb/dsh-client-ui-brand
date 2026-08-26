@@ -4,6 +4,10 @@
 
 这是一个非常简单的 DeepSeek Harness 的插件。在不修改 DeepSeek Harness 源码的前提下，可以自定义产品名称和 logo。
 
+## 效果预览
+
+![品牌插件效果预览](assets/web-preview.png)
+
 ## 功能
 
 - 自定义展开侧边栏中的产品名称；
