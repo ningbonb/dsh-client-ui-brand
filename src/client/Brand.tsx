@@ -4,6 +4,24 @@ import type { BrandConfig } from './config.ts'
 
 type BrandMarkProps = HeroBrandMarkOwnerProps & SidebarBrandMarkOwnerProps
 
+/** Render one configured image inside the square canvas requested by the host. */
+function BrandImageMark({ alt, className, size, square, src }: BrandMarkProps & { alt: string; square: boolean; src: string }) {
+  return (
+    <span
+      className={className}
+      style={{ alignItems: 'center', display: 'inline-flex', height: size, justifyContent: 'center', width: size }}
+    >
+      <img
+        alt={alt}
+        src={src}
+        style={square
+          ? { display: 'block', height: '100%', width: '100%' }
+          : { display: 'block', height: size, objectFit: 'contain', width: size }}
+      />
+    </span>
+  )
+}
+
 /** Original, dependency-free default mark for Brand New Agent. */
 export function DefaultAgentMark({ size, className }: BrandMarkProps) {
   return (
@@ -33,16 +51,7 @@ export function DefaultAgentMark({ size, className }: BrandMarkProps) {
 export function createBrandMark(brand: BrandConfig) {
   return function BrandMark({ size, className }: BrandMarkProps) {
     if (brand.logoHref === undefined) return <DefaultAgentMark size={size} className={className} />
-    return (
-      <img
-        alt={brand.logoAlt}
-        className={className}
-        height={size}
-        src={brand.logoHref}
-        style={{ display: 'block', objectFit: 'contain' }}
-        width={size}
-      />
-    )
+    return <BrandImageMark alt={brand.logoAlt} className={className} size={size} square={brand.logoSquare === true} src={brand.logoHref} />
   }
 }
 

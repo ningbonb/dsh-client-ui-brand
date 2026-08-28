@@ -3,6 +3,7 @@ import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
 import type {} from '@deepseek-ai/dsh-client-ui-sidebar/client'
 import { createBrandMark, createBrandName } from './Brand.tsx'
 import { normalizeBrandConfig, type BrandConfig } from './config.ts'
+import { installDocumentTitleBrand } from './title.ts'
 
 /** Global injected by the host half before client modules execute. */
 export const BRAND_GLOBAL = '__NINGBO_DSH_BRAND__'
@@ -36,5 +37,7 @@ export function installBrand(ctx: ClientContext, config: BrandConfig = {}): void
 
 /** Read host-injected metadata and occupy the shipped brand extension slots. */
 export function apply(ctx: ClientContext): void {
-  installBrand(ctx, window[BRAND_GLOBAL])
+  const brand = normalizeBrandConfig(window[BRAND_GLOBAL] ?? {})
+  installBrand(ctx, brand)
+  ctx.effect(() => installDocumentTitleBrand(brand.productName), 'dsh-client-ui-brand: document title')
 }

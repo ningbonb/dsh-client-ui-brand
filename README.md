@@ -2,8 +2,8 @@ English | [中文](README.zh.md)
 
 # dsh-client-ui-brand
 
-This is a simple DeepSeek Harness plugin. It customizes the product name and
-logo without changing DeepSeek Harness source code.
+This is a simple DeepSeek Harness plugin. It customizes product branding
+without changing DeepSeek Harness source code.
 
 ## Preview
 
@@ -11,11 +11,13 @@ logo without changing DeepSeek Harness source code.
 
 ## What it changes
 
-- product name in the expanded sidebar;
-- product mark in the sidebar and empty conversation.
+- product name in the expanded sidebar and browser title;
+- product mark in the sidebar and empty conversation;
+- browser favicon and PWA manifest when a logo is configured.
 
-Browser title, favicon, and PWA metadata are not configurable through this
-plugin. They require a branded Web Shell build.
+The plugin wraps every configured logo in a square, transparent SVG canvas;
+non-square marks retain their aspect ratio and receive centered padding. DSH's
+runtime session title remains visible and ends with the configured product name.
 
 DSH Core does not currently provide an accepted slot for the empty-conversation
 slogan. This plugin therefore cannot change it without an intrusive
@@ -55,9 +57,9 @@ when overriding the defaults:
 
 | Field | Default | Description |
 | --- | --- | --- |
-| `productName` | `Brand New Agent` | Sidebar product name. |
-| `logoUrl` | Not set | HTTPS URL, same-origin absolute path, or `data:image/...` URL for the logo. |
-| `logoPath` | Not set | Absolute path to one local logo image served by DSH. |
+| `productName` | `Brand New Agent` | Sidebar product name, browser title, and PWA name. |
+| `logoUrl` | Not set | HTTPS URL, same-origin absolute path, or `data:image/...` URL for the logo, favicon, and PWA icon. |
+| `logoPath` | Not set | Absolute path to one local image served by DSH for the logo, favicon, and PWA icon. |
 | `logoAlt` | `productName` | Accessible logo text. |
 
 Configure either `logoUrl` or `logoPath`, not both.
@@ -77,6 +79,12 @@ The local file is exposed only through the fixed route:
 ```text
 /plugins/dsh-client-ui-brand/brand-logo
 ```
+
+When a logo is configured, the plugin serves the square brand image at
+`/plugins/dsh-client-ui-brand/brand-mark.svg`, generates a PWA manifest at
+`/plugins/dsh-client-ui-brand/manifest.webmanifest`, and replaces the Web
+Shell's favicon and manifest links. Without a configured logo, the Web Shell
+keeps its default favicon and manifest.
 
 For safety, the path must be an absolute, non-symlink regular file with a
 `gif`, `jpeg`, `jpg`, `png`, `svg`, or `webp` extension. The route accepts only
