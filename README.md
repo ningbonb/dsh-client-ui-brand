@@ -17,8 +17,10 @@ without changing DeepSeek Harness source code.
 
 The plugin displays configured marks with centered, proportional fitting in the
 Web interface. It separately wraps every favicon and PWA icon in a square,
-transparent SVG canvas, so non-square marks do not stretch. DSH's runtime
-session title remains visible and ends with the configured product name.
+transparent SVG canvas, so non-square marks do not stretch. HTTPS images are
+cached by the plugin and served from a fixed same-origin route for browser
+metadata. DSH's runtime session title remains visible and ends with the
+configured product name.
 
 DSH Core does not currently provide an accepted slot for the empty-conversation
 slogan. This plugin therefore cannot change it without an intrusive

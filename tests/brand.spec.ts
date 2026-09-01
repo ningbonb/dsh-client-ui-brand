@@ -1,7 +1,7 @@
 import { mkdtemp, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { BRAND_MANIFEST_ROUTE, LOCAL_LOGO_ROUTE, SQUARE_LOGO_ROUTE, prepareBrand, renderBrandIndex, renderSquareLogo } from '../src/index.ts'
 import { brandDocumentTitle } from '../src/client/title.ts'
 
@@ -25,27 +25,30 @@ describe('brand host configuration', () => {
   })
 
   it('wraps a HTTPS logo URL in the square browser icon', async () => {
-    await expect(prepareBrand({
-      productName: 'Acme Agent',
-      logoUrl: 'https://cdn.example.test/logo.svg',
-    })).resolves.toEqual({
-      boot: {
+    const fetchMock = vi.fn().mockResolvedValue(new Response('logo', {
+      headers: { 'content-type': 'image/svg+xml; charset=utf-8' },
+    }))
+    vi.stubGlobal('fetch', fetchMock)
+    try {
+      const result = await prepareBrand({
+        productName: 'Acme Agent',
+        logoUrl: 'https://cdn.example.test/logo.svg',
+      })
+      expect(result.boot).toEqual({
         productName: 'Acme Agent',
         logoAlt: 'Acme Agent',
         logoHref: 'https://cdn.example.test/logo.svg',
         faviconHref: SQUARE_LOGO_ROUTE,
-      },
-      manifest: {
-        id: '/',
-        name: 'Acme Agent',
-        short_name: 'Acme Agent',
-        start_url: '/',
-        scope: '/',
-        display: 'fullscreen',
-        icons: [{ src: SQUARE_LOGO_ROUTE, purpose: 'any', type: 'image/svg+xml' }],
-      },
-      squareLogoSource: 'https://cdn.example.test/logo.svg',
-    })
+      })
+      expect(result.manifest?.icons).toEqual([
+        { src: SQUARE_LOGO_ROUTE, purpose: 'any', type: 'image/svg+xml' },
+      ])
+      expect(result.squareLogoSource).toBe(LOCAL_LOGO_ROUTE)
+      expect(result.remoteLogo).toEqual({ body: Buffer.from('logo'), contentType: 'image/svg+xml' })
+      expect(fetchMock).toHaveBeenCalledWith('https://cdn.example.test/logo.svg')
+    } finally {
+      vi.unstubAllGlobals()
+    }
   })
 
   it('rejects conflicting logo sources and insecure remote URLs', async () => {
@@ -90,21 +93,28 @@ describe('brand host configuration', () => {
   })
 
   it('replaces title, favicon, and manifest links', async () => {
-    const prepared = await prepareBrand({
-      productName: 'Acme <Agent>',
-      logoUrl: 'https://cdn.example.test/logo.png',
-    })
-    const document = renderBrandIndex(`<!doctype html><head>
-      <link rel="manifest" href="/manifest.webmanifest">
-      <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-      <title>DSH Local Build</title>
-    </head><body></body>`, prepared.boot, prepared.manifest)
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('logo', {
+      headers: { 'content-type': 'image/png' },
+    })))
+    try {
+      const prepared = await prepareBrand({
+        productName: 'Acme <Agent>',
+        logoUrl: 'https://cdn.example.test/logo.png',
+      })
+      const document = renderBrandIndex(`<!doctype html><head>
+        <link rel="manifest" href="/manifest.webmanifest">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+        <title>DSH Local Build</title>
+      </head><body></body>`, prepared.boot, prepared.manifest)
 
-    expect(document).toContain('<title>Acme &lt;Agent&gt;</title>')
-    expect(document).toContain(`<link rel="icon" href="${SQUARE_LOGO_ROUTE}" type="image/svg+xml">`)
-    expect(document).toContain(`<link rel="manifest" href="${BRAND_MANIFEST_ROUTE}">`)
-    expect(document).not.toContain('/favicon.svg')
-    expect(document).not.toContain('href="/manifest.webmanifest"')
+      expect(document).toContain('<title>Acme &lt;Agent&gt;</title>')
+      expect(document).toContain(`<link rel="icon" href="${SQUARE_LOGO_ROUTE}" type="image/svg+xml">`)
+      expect(document).toContain(`<link rel="manifest" href="${BRAND_MANIFEST_ROUTE}">`)
+      expect(document).not.toContain('/favicon.svg')
+      expect(document).not.toContain('href="/manifest.webmanifest"')
+    } finally {
+      vi.unstubAllGlobals()
+    }
   })
 
   it('leaves the shell favicon and manifest intact without a configured logo', async () => {
