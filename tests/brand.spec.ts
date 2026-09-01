@@ -2,7 +2,7 @@ import { mkdtemp, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, expect, it, vi } from 'vitest'
-import { BRAND_MANIFEST_ROUTE, LOCAL_LOGO_ROUTE, SQUARE_LOGO_ROUTE, prepareBrand, renderBrandIndex, renderSquareLogo } from '../src/index.ts'
+import { BRAND_MANIFEST_ROUTE, FAVICON_LOGO_ROUTE, LOCAL_LOGO_ROUTE, SQUARE_LOGO_ROUTE, prepareBrand, renderBrandIndex, renderSquareLogo } from '../src/index.ts'
 import { brandDocumentTitle } from '../src/client/title.ts'
 
 describe('brand host configuration', () => {
@@ -38,7 +38,7 @@ describe('brand host configuration', () => {
         productName: 'Acme Agent',
         logoAlt: 'Acme Agent',
         logoHref: 'https://cdn.example.test/logo.svg',
-        faviconHref: SQUARE_LOGO_ROUTE,
+        faviconHref: FAVICON_LOGO_ROUTE,
       })
       expect(result.manifest?.icons).toEqual([
         { src: SQUARE_LOGO_ROUTE, purpose: 'any', type: 'image/svg+xml' },
@@ -68,7 +68,7 @@ describe('brand host configuration', () => {
       productName: 'Local Agent',
       logoAlt: 'Local Agent',
       logoHref: expect.stringMatching(/^data:image\/svg\+xml;base64,/),
-      faviconHref: SQUARE_LOGO_ROUTE,
+      faviconHref: FAVICON_LOGO_ROUTE,
     })
     expect(result.boot.logoHref).not.toContain(root)
     expect(result.localLogo?.canonicalPath).toContain('logo.svg')
@@ -108,7 +108,7 @@ describe('brand host configuration', () => {
       </head><body></body>`, prepared.boot, prepared.manifest)
 
       expect(document).toContain('<title>Acme &lt;Agent&gt;</title>')
-      expect(document).toContain(`<link rel="icon" href="${SQUARE_LOGO_ROUTE}" type="image/svg+xml">`)
+      expect(document).toContain(`<link rel="icon" href="${FAVICON_LOGO_ROUTE}" type="image/svg+xml">`)
       expect(document).toContain(`<link rel="manifest" href="${BRAND_MANIFEST_ROUTE}">`)
       expect(document).not.toContain('/favicon.svg')
       expect(document).not.toContain('href="/manifest.webmanifest"')

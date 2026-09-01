@@ -13,6 +13,9 @@ export const LOCAL_LOGO_ROUTE = '/plugins/dsh-client-ui-brand/brand-logo'
 /** Fixed square SVG canvas around the configured product mark. */
 export const SQUARE_LOGO_ROUTE = '/plugins/dsh-client-ui-brand/brand-mark.svg'
 
+/** Versioned square image URL that forces browsers to discard prior favicon failures. */
+export const FAVICON_LOGO_ROUTE = `${SQUARE_LOGO_ROUTE}?v=0.1.10`
+
 /** Fixed path that exposes the manifest generated from the configured brand. */
 export const BRAND_MANIFEST_ROUTE = '/plugins/dsh-client-ui-brand/manifest.webmanifest'
 
@@ -124,7 +127,7 @@ function withLogo(
   squareLogoSource = sourceHref,
 ): PreparedBrand {
   return {
-    boot: { ...base, logoHref: sourceHref, faviconHref: SQUARE_LOGO_ROUTE },
+    boot: { ...base, logoHref: sourceHref, faviconHref: FAVICON_LOGO_ROUTE },
     manifest: {
       id: '/',
       name: base.productName,
