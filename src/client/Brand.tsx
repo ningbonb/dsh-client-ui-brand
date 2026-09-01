@@ -4,8 +4,8 @@ import type { BrandConfig } from './config.ts'
 
 type BrandMarkProps = HeroBrandMarkOwnerProps & SidebarBrandMarkOwnerProps
 
-/** Render one configured image inside the square canvas requested by the host. */
-function BrandImageMark({ alt, className, size, square, src }: BrandMarkProps & { alt: string; square: boolean; src: string }) {
+/** Render one configured image centered inside its host-owned square. */
+function BrandImageMark({ alt, className, size, src }: BrandMarkProps & { alt: string; src: string }) {
   return (
     <span
       className={className}
@@ -14,9 +14,7 @@ function BrandImageMark({ alt, className, size, square, src }: BrandMarkProps & 
       <img
         alt={alt}
         src={src}
-        style={square
-          ? { display: 'block', height: '100%', width: '100%' }
-          : { display: 'block', height: size, objectFit: 'contain', width: size }}
+        style={{ display: 'block', height: size, objectFit: 'contain', width: size }}
       />
     </span>
   )
@@ -51,7 +49,7 @@ export function DefaultAgentMark({ size, className }: BrandMarkProps) {
 export function createBrandMark(brand: BrandConfig) {
   return function BrandMark({ size, className }: BrandMarkProps) {
     if (brand.logoHref === undefined) return <DefaultAgentMark size={size} className={className} />
-    return <BrandImageMark alt={brand.logoAlt} className={className} size={size} square={brand.logoSquare === true} src={brand.logoHref} />
+    return <BrandImageMark alt={brand.logoAlt} className={className} size={size} src={brand.logoHref} />
   }
 }
 

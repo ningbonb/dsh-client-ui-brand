@@ -32,8 +32,8 @@ describe('brand host configuration', () => {
       boot: {
         productName: 'Acme Agent',
         logoAlt: 'Acme Agent',
-        logoHref: SQUARE_LOGO_ROUTE,
-        logoSquare: true,
+        logoHref: 'https://cdn.example.test/logo.svg',
+        faviconHref: SQUARE_LOGO_ROUTE,
       },
       manifest: {
         id: '/',
@@ -64,8 +64,8 @@ describe('brand host configuration', () => {
     expect(result.boot).toEqual({
       productName: 'Local Agent',
       logoAlt: 'Local Agent',
-      logoHref: SQUARE_LOGO_ROUTE,
-      logoSquare: true,
+      logoHref: expect.stringMatching(/^data:image\/svg\+xml;base64,/),
+      faviconHref: SQUARE_LOGO_ROUTE,
     })
     expect(result.boot.logoHref).not.toContain(root)
     expect(result.localLogo?.canonicalPath).toContain('logo.svg')

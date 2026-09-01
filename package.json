@@ -1,6 +1,6 @@
 {
   "name": "dsh-client-ui-brand",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Non-invasive product name and logo branding for DeepSeek Harness Web",
   "type": "module",
   "license": "MIT",

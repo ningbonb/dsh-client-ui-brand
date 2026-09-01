@@ -41,7 +41,7 @@ export interface Config {
 export interface BrandBootConfig {
   productName: string
   logoHref?: string
-  logoSquare?: boolean
+  faviconHref?: string
   logoAlt: string
 }
 
@@ -113,7 +113,7 @@ function withLogo(
   sourceHref: string,
 ): PreparedBrand {
   return {
-    boot: { ...base, logoHref: SQUARE_LOGO_ROUTE, logoSquare: true },
+    boot: { ...base, logoHref: sourceHref, faviconHref: SQUARE_LOGO_ROUTE },
     manifest: {
       id: '/',
       name: base.productName,
@@ -273,12 +273,12 @@ export function renderBrandIndex(html: string, boot: BrandBootConfig, manifest: 
     `<title>${escapeHtml(boot.productName)}</title>`,
     'title',
   )
-  if (boot.logoHref !== undefined) {
-    const contentType = contentTypeForUrl(boot.logoHref)
+  if (boot.faviconHref !== undefined) {
+    const contentType = contentTypeForUrl(boot.faviconHref)
     rendered = replaceRequired(
       rendered,
       /<link\b(?=[^>]*\brel\s*=\s*["']icon["'])[^>]*>/i,
-      `<link rel="icon" href="${escapeHtml(boot.logoHref)}"${contentType === undefined ? '' : ` type="${contentType}"`}>`,
+      `<link rel="icon" href="${escapeHtml(boot.faviconHref)}"${contentType === undefined ? '' : ` type="${contentType}"`}>`,
       'favicon',
     )
   }

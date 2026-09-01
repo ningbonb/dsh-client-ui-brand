@@ -4,8 +4,6 @@ export interface BrandConfig {
   productName?: string
   /** Same-origin, data, or HTTPS URL for the product mark when configured. */
   logoHref?: string
-  /** Whether the host wrapped the mark in a square SVG canvas. */
-  logoSquare?: boolean
   /** Accessible text for the product mark. */
   logoAlt?: string
 }
@@ -20,7 +18,6 @@ export function normalizeBrandConfig(config: BrandConfig): Required<Pick<BrandCo
   return {
     productName,
     ...(logoHref === undefined || logoHref.length === 0 ? {} : { logoHref }),
-    ...(config.logoSquare === true ? { logoSquare: true } : {}),
     logoAlt: config.logoAlt?.trim() || productName,
   }
 }
