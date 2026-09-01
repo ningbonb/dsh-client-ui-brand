@@ -15,9 +15,10 @@ without changing DeepSeek Harness source code.
 - product mark in the sidebar and empty conversation;
 - browser favicon and PWA manifest when a logo is configured.
 
-The plugin wraps every configured logo in a square, transparent SVG canvas;
-non-square marks retain their aspect ratio and receive centered padding. DSH's
-runtime session title remains visible and ends with the configured product name.
+The plugin wraps every configured logo source in a square, transparent SVG
+canvas; non-square marks retain their aspect ratio and receive centered padding
+in browser favicons and PWA icons. DSH's runtime session title remains visible
+and ends with the configured product name.
 
 DSH Core does not currently provide an accepted slot for the empty-conversation
 slogan. This plugin therefore cannot change it without an intrusive

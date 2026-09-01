@@ -24,7 +24,7 @@ describe('brand host configuration', () => {
     })
   })
 
-  it('accepts a HTTPS logo URL', async () => {
+  it('wraps a HTTPS logo URL in the square browser icon', async () => {
     await expect(prepareBrand({
       productName: 'Acme Agent',
       logoUrl: 'https://cdn.example.test/logo.svg',
@@ -32,7 +32,8 @@ describe('brand host configuration', () => {
       boot: {
         productName: 'Acme Agent',
         logoAlt: 'Acme Agent',
-        logoHref: 'https://cdn.example.test/logo.svg',
+        logoHref: SQUARE_LOGO_ROUTE,
+        logoSquare: true,
       },
       manifest: {
         id: '/',
@@ -41,8 +42,9 @@ describe('brand host configuration', () => {
         start_url: '/',
         scope: '/',
         display: 'fullscreen',
-        icons: [{ src: 'https://cdn.example.test/logo.svg', purpose: 'any', type: 'image/svg+xml' }],
+        icons: [{ src: SQUARE_LOGO_ROUTE, purpose: 'any', type: 'image/svg+xml' }],
       },
+      squareLogoSource: 'https://cdn.example.test/logo.svg',
     })
   })
 
@@ -99,7 +101,7 @@ describe('brand host configuration', () => {
     </head><body></body>`, prepared.boot, prepared.manifest)
 
     expect(document).toContain('<title>Acme &lt;Agent&gt;</title>')
-    expect(document).toContain('<link rel="icon" href="https://cdn.example.test/logo.png" type="image/png">')
+    expect(document).toContain(`<link rel="icon" href="${SQUARE_LOGO_ROUTE}" type="image/svg+xml">`)
     expect(document).toContain(`<link rel="manifest" href="${BRAND_MANIFEST_ROUTE}">`)
     expect(document).not.toContain('/favicon.svg')
     expect(document).not.toContain('href="/manifest.webmanifest"')

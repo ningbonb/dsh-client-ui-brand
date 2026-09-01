@@ -96,7 +96,7 @@ export async function prepareBrand(config: Config): Promise<PreparedBrand> {
 
   if (logoUrl !== undefined) {
     assertLogoUrl(logoUrl)
-    return withLogo(base, logoUrl, logoUrl.startsWith('data:image/'), contentTypeForUrl(logoUrl))
+    return withLogo(base, logoUrl)
   }
 
   if (config.logoPath === undefined) {
@@ -104,19 +104,16 @@ export async function prepareBrand(config: Config): Promise<PreparedBrand> {
   }
 
   const localLogo = await prepareLocalLogo(config.logoPath)
-  return { ...withLogo(base, localLogo.dataHref, true, localLogo.contentType), localLogo }
+  return { ...withLogo(base, localLogo.dataHref), localLogo }
 }
 
 /** Add browser metadata derived from one already-validated product mark. */
 function withLogo(
   base: Pick<BrandBootConfig, 'productName' | 'logoAlt'>,
   sourceHref: string,
-  square: boolean,
-  contentType: string | undefined,
 ): PreparedBrand {
-  const logoHref = square ? SQUARE_LOGO_ROUTE : sourceHref
   return {
-    boot: { ...base, logoHref, ...(square ? { logoSquare: true } : {}) },
+    boot: { ...base, logoHref: SQUARE_LOGO_ROUTE, logoSquare: true },
     manifest: {
       id: '/',
       name: base.productName,
@@ -124,9 +121,9 @@ function withLogo(
       start_url: '/',
       scope: '/',
       display: 'fullscreen',
-      icons: [{ src: logoHref, purpose: 'any', ...(square ? { type: 'image/svg+xml' } : contentType === undefined ? {} : { type: contentType }) }],
+      icons: [{ src: SQUARE_LOGO_ROUTE, purpose: 'any', type: 'image/svg+xml' }],
     },
-    ...(square ? { squareLogoSource: sourceHref } : {}),
+    squareLogoSource: sourceHref,
   }
 }
 
