@@ -43,8 +43,7 @@ describe('brand host configuration', () => {
       expect(result.manifest?.icons).toEqual([
         { src: SQUARE_LOGO_ROUTE, purpose: 'any', type: 'image/svg+xml' },
       ])
-      expect(result.squareLogoSource).toBe(LOCAL_LOGO_ROUTE)
-      expect(result.remoteLogo).toEqual({ body: Buffer.from('logo'), contentType: 'image/svg+xml' })
+      expect(result.squareLogoSource).toBe('data:image/svg+xml;base64,bG9nbw==')
       expect(fetchMock).toHaveBeenCalledWith('https://cdn.example.test/logo.svg')
     } finally {
       vi.unstubAllGlobals()

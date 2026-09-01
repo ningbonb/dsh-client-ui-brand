@@ -14,7 +14,7 @@ export const LOCAL_LOGO_ROUTE = '/plugins/dsh-client-ui-brand/brand-logo'
 export const SQUARE_LOGO_ROUTE = '/plugins/dsh-client-ui-brand/brand-mark.svg'
 
 /** Versioned square image URL that forces browsers to discard prior favicon failures. */
-export const FAVICON_LOGO_ROUTE = `${SQUARE_LOGO_ROUTE}?v=0.1.10`
+export const FAVICON_LOGO_ROUTE = `${SQUARE_LOGO_ROUTE}?v=0.1.11`
 
 /** Fixed path that exposes the manifest generated from the configured brand. */
 export const BRAND_MANIFEST_ROUTE = '/plugins/dsh-client-ui-brand/manifest.webmanifest'
@@ -69,16 +69,10 @@ interface LocalLogo {
   dataHref: string
 }
 
-interface RemoteLogo {
-  body: Buffer
-  contentType: string
-}
-
 interface PreparedBrand {
   boot: BrandBootConfig
   localLogo?: LocalLogo
   manifest?: BrandManifest
-  remoteLogo?: RemoteLogo
   squareLogoSource?: string
 }
 
@@ -106,8 +100,7 @@ export async function prepareBrand(config: Config): Promise<PreparedBrand> {
   if (logoUrl !== undefined) {
     assertLogoUrl(logoUrl)
     if (logoUrl.startsWith('https://')) {
-      const remoteLogo = await prepareRemoteLogo(logoUrl)
-      return { ...withLogo(base, logoUrl, LOCAL_LOGO_ROUTE), remoteLogo }
+      return withLogo(base, logoUrl, await prepareRemoteLogoSource(logoUrl))
     }
     return withLogo(base, logoUrl)
   }
@@ -168,15 +161,15 @@ function contentTypeForUrl(value: string): string | undefined {
   }
 }
 
-/** Download one configured HTTPS product mark for same-origin browser metadata. */
-async function prepareRemoteLogo(value: string): Promise<RemoteLogo> {
+/** Download one configured HTTPS product mark for an embedded browser icon. */
+async function prepareRemoteLogoSource(value: string): Promise<string> {
   const response = await fetch(value)
   if (!response.ok) throw new Error(`dsh-client-ui-brand: logoUrl returned HTTP ${response.status}`)
   const contentType = response.headers.get('content-type')?.split(';', 1)[0]?.trim().toLowerCase() || contentTypeForUrl(value)
   if (contentType === undefined || !contentType.startsWith('image/')) {
     throw new Error('dsh-client-ui-brand: logoUrl must return an image content type')
   }
-  return { body: Buffer.from(await response.arrayBuffer()), contentType }
+  return `data:${contentType};base64,${Buffer.from(await response.arrayBuffer()).toString('base64')}`
 }
 
 /** Resolve and validate one configured local logo without exposing its path to clients. */
@@ -217,24 +210,6 @@ function serveLocalLogo(logo: LocalLogo) {
       res.writeHead(404)
       res.end()
     }
-  }
-}
-
-/** Serve one configured remote image from a fixed same-origin route. */
-function serveRemoteLogo(logo: RemoteLogo) {
-  return (req: IncomingMessage, res: ServerResponse): void => {
-    if (req.method !== 'GET' && req.method !== 'HEAD') {
-      res.writeHead(405, { allow: 'GET, HEAD' })
-      res.end()
-      return
-    }
-    res.writeHead(200, {
-      'cache-control': 'no-store',
-      'content-length': String(logo.body.byteLength),
-      'content-type': logo.contentType,
-      'x-content-type-options': 'nosniff',
-    })
-    res.end(req.method === 'HEAD' ? undefined : logo.body)
   }
 }
 
@@ -341,7 +316,7 @@ export function renderBrandIndex(html: string, boot: BrandBootConfig, manifest: 
  * logo file. The local filesystem path is never added to browser-visible data.
  */
 export async function apply(ctx: Context, config: Config = {}): Promise<void> {
-  const { boot, localLogo, manifest, remoteLogo, squareLogoSource } = await prepareBrand(config)
+  const { boot, localLogo, manifest, squareLogoSource } = await prepareBrand(config)
 
   ctx.on('webserver/index-inject', (table) => {
     table.push({ kind: 'global', name: BRAND_GLOBAL, value: boot })
@@ -358,14 +333,6 @@ export async function apply(ctx: Context, config: Config = {}): Promise<void> {
       path: LOCAL_LOGO_ROUTE,
       handler: serveLocalLogo(localLogo),
     }), 'dsh-client-ui-brand: local-logo route')
-  }
-
-  if (remoteLogo !== undefined) {
-    ctx.effect(() => ctx.webServer.register({
-      kind: 'exact',
-      path: LOCAL_LOGO_ROUTE,
-      handler: serveRemoteLogo(remoteLogo),
-    }), 'dsh-client-ui-brand: remote-logo route')
   }
 
   if (squareLogoSource !== undefined) {
