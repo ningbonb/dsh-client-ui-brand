@@ -1,6 +1,6 @@
 {
   "name": "dsh-client-ui-brand",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "Non-invasive product name and logo branding for DeepSeek Harness Web",
   "type": "module",
   "license": "MIT",
@@ -52,7 +52,7 @@
     "pack:check": "npm pack --dry-run"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "^1.0.0",
+    "@deepseek-ai/cordis": "^4.0.1",
     "@deepseek-ai/dsh-client-runtime": "^0.1.0",
     "@deepseek-ai/dsh-client-ui-conversation": "^0.1.0",
     "@deepseek-ai/dsh-client-ui-sidebar": "^0.1.0",
