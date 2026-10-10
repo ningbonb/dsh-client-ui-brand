@@ -36,6 +36,8 @@ dsh plugin --profile web add dsh-client-ui-brand
 
 Restart the DSH Web process after installation.
 
+> This release targets DSH `0.2.0-rc.2` and later; use `0.1.12` for DSH `0.1.x`.
+
 ## Configure
 
 Add a later Web profile patch, usually at:

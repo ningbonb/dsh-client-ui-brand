@@ -1,8 +1,11 @@
-import type { HeroBrandMarkOwnerProps } from '@deepseek-ai/dsh-client-ui-conversation/client'
-import type { SidebarBrandMarkOwnerProps } from '@deepseek-ai/dsh-client-ui-sidebar/client'
-import type { BrandConfig } from './config.ts'
+import type { NormalizedBrandConfig } from './config.ts'
 
-type BrandMarkProps = HeroBrandMarkOwnerProps & SidebarBrandMarkOwnerProps
+interface BrandMarkProps {
+  /** Requested square edge in pixels. */
+  size: number
+  /** Host class preserving the surrounding mark geometry. */
+  className?: string
+}
 
 /** Render one configured image centered inside its host-owned square. */
 function BrandImageMark({ alt, className, size, src }: BrandMarkProps & { alt: string; src: string }) {
@@ -46,7 +49,7 @@ export function DefaultAgentMark({ size, className }: BrandMarkProps) {
 }
 
 /** Make the product mark while preserving every host-owned size and class. */
-export function createBrandMark(brand: BrandConfig) {
+export function createBrandMark(brand: NormalizedBrandConfig) {
   return function BrandMark({ size, className }: BrandMarkProps) {
     if (brand.logoHref === undefined) return <DefaultAgentMark size={size} className={className} />
     return <BrandImageMark alt={brand.logoAlt} className={className} size={size} src={brand.logoHref} />
@@ -54,7 +57,7 @@ export function createBrandMark(brand: BrandConfig) {
 }
 
 /** Make the product name occupant for the sidebar's independently sized name seat. */
-export function createBrandName(brand: BrandConfig) {
+export function createBrandName(brand: NormalizedBrandConfig) {
   return function BrandName() {
     return <span style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{brand.productName}</span>
   }

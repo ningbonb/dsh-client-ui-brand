@@ -102,13 +102,16 @@ describe('brand host configuration', () => {
       })
       const document = renderBrandIndex(`<!doctype html><head>
         <link rel="manifest" href="/manifest.webmanifest">
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+        <link rel="icon" type="image/svg+xml" href="/favicon-dark.svg" media="(prefers-color-scheme: dark)">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" media="(prefers-color-scheme: light)">
         <title>DSH Local Build</title>
       </head><body></body>`, prepared.boot, prepared.manifest)
 
       expect(document).toContain('<title>Acme &lt;Agent&gt;</title>')
       expect(document).toContain(`<link rel="icon" href="${FAVICON_LOGO_ROUTE}" type="image/svg+xml">`)
       expect(document).toContain(`<link rel="manifest" href="${BRAND_MANIFEST_ROUTE}">`)
+      expect(document.match(/<link[^>]*\brel="icon"[^>]*>/g)).toHaveLength(1)
+      expect(document).not.toContain('/favicon-dark.svg')
       expect(document).not.toContain('/favicon.svg')
       expect(document).not.toContain('href="/manifest.webmanifest"')
     } finally {

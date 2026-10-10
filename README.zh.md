@@ -27,6 +27,8 @@ dsh plugin --profile web add dsh-client-ui-brand
 
 安装后请重启 DSH Web 进程。
 
+> 该版本面向 DSH `0.2.0-rc.2` 及以上；DSH `0.1.x` 请使用 `0.1.12`。
+
 ## 配置
 
 在后续 Web profile patch 中添加配置，通常是：
