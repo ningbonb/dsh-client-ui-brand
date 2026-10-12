@@ -14,7 +14,7 @@ export const LOCAL_LOGO_ROUTE = '/plugins/dsh-client-ui-brand/brand-logo'
 export const SQUARE_LOGO_ROUTE = '/plugins/dsh-client-ui-brand/brand-mark.svg'
 
 /** Versioned square image URL that forces browsers to discard prior favicon failures. */
-export const FAVICON_LOGO_ROUTE = `${SQUARE_LOGO_ROUTE}?v=0.1.11`
+export const FAVICON_LOGO_ROUTE = `${SQUARE_LOGO_ROUTE}?v=0.2.0-rc.2`
 
 /** Fixed path that exposes the manifest generated from the configured brand. */
 export const BRAND_MANIFEST_ROUTE = '/plugins/dsh-client-ui-brand/manifest.webmanifest'
@@ -292,13 +292,16 @@ export function renderBrandIndex(html: string, boot: BrandBootConfig, manifest: 
     'title',
   )
   if (boot.faviconHref !== undefined) {
-    const contentType = contentTypeForUrl(boot.faviconHref)
-    rendered = replaceRequired(
-      rendered,
-      /<link\b(?=[^>]*\brel\s*=\s*["']icon["'])[^>]*>/i,
-      `<link rel="icon" href="${escapeHtml(boot.faviconHref)}"${contentType === undefined ? '' : ` type="${contentType}"`}>`,
-      'favicon',
-    )
+    const faviconHref = boot.faviconHref
+    const contentType = contentTypeForUrl(faviconHref)
+    const iconPattern = /<link\b(?=[^>]*\brel\s*=\s*["']icon["'])[^>]*>/gi
+    let replaced = false
+    rendered = rendered.replace(iconPattern, () => {
+      if (replaced) return ''
+      replaced = true
+      return `<link rel="icon" href="${escapeHtml(faviconHref)}"${contentType === undefined ? '' : ` type="${contentType}"`}>`
+    })
+    if (!replaced) throw new Error('dsh-client-ui-brand: Web Shell has no favicon element to brand')
   }
   if (manifest !== undefined) {
     rendered = replaceRequired(

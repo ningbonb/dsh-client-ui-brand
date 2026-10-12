@@ -11,6 +11,9 @@ export interface BrandConfig {
 /** Default product identity when the deployment did not provide an explicit name. */
 export const DEFAULT_PRODUCT_NAME = 'Brand New Agent'
 
+/** Brand metadata after defaults for productName and logoAlt are applied. */
+export type NormalizedBrandConfig = ReturnType<typeof normalizeBrandConfig>
+
 /** Validate and normalize metadata read from the initial document global. */
 export function normalizeBrandConfig(config: BrandConfig): Required<Pick<BrandConfig, 'productName' | 'logoAlt'>> & Omit<BrandConfig, 'productName' | 'logoAlt'> {
   const productName = config.productName?.trim() || DEFAULT_PRODUCT_NAME
